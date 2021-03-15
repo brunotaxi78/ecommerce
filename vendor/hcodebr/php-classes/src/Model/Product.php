@@ -92,7 +92,9 @@ class Product extends Model{
 
             }
 
-        return $this->setdesphoto($url);
+            $this->setdesphoto($url);
+
+        return $this;
     }
 
     public function getValues(){
