@@ -148,12 +148,79 @@ $app->get("/checkout", function() {
 
 	$address = new Address();
 
+	if(isset($_GET['zipcode'])){
+
+		$address->loadFromCP($_GET['zipcode']);
+
+		$address->setdeszipcode($_GET['zipcode']);
+
+		$cart->save();
+
+		$cart->getCalculateTotal();
+		
+	} 
+
 	$page = new Page();
 
 	$page->setTpl("checkout", [
 		'cart'=>$cart->getValues(),
-		'address'=>$address->getValues()
+		'address'=>$address->getValues(),
+		'products'=>$cart->getProducts(),
+		'error'=>Address::getMsgError()
 	]);
+});
+
+$app->post("/checkout", function() {
+
+	User::verifyLogin(false);
+
+	if (!isset($_POST['zipcode']) || $_POST['zipcode'] === '') {
+		Address::setMsgError("Informe o Código Postal.");
+		header('Location: /checkout');
+		exit;
+	}
+
+	if (!isset($_POST['desaddress']) || $_POST['desaddress'] === '') {
+		Address::setMsgError("Informe o endereço.");
+		header('Location: /checkout');
+		exit;
+	}
+
+	if (!isset($_POST['desdistrict']) || $_POST['desdistrict'] === '') {
+		Address::setMsgError("Informe o Distrito.");
+		header('Location: /checkout');
+		exit;
+	}
+
+	if (!isset($_POST['descity']) || $_POST['descity'] === '') {
+		Address::setMsgError("Informe a cidade.");
+		header('Location: /checkout');
+		exit;
+	}
+
+	if (!isset($_POST['desstate']) || $_POST['desstate'] === '') {
+		Address::setMsgError("Informe o Concelho.");
+		header('Location: /checkout');
+		exit;
+	}
+
+
+	$user = User::getFromSession();
+
+	$address = new Address();
+
+	$_POST['deszipcode'] = $_POST['zipcode'];
+	$_POST['idperson'] = $user->getidperson();
+	$_POST['descomplement'] = $_POST['descomplement'];
+
+	$address->setData($_POST);
+
+	$address->save();
+
+	header("Location: /order");
+	exit;
+
+
 });
 
 $app->get("/login", function() {
