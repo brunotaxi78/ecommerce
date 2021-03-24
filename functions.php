@@ -3,6 +3,13 @@
 use \Hcode\Model\User;
 use \Hcode\Model\Cart;
 
+function formatDate($date)
+{
+
+	return date('d/m/Y', strtotime($date));
+
+}
+
 function formatPrice($vlprice){
 
     if (!$vlprice > 0 ) $vlprice = 0;
