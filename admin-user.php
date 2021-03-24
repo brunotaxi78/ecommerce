@@ -34,12 +34,11 @@ $app->get('/admin/users', function() {
 		]);
 
 	}
-	$users = User::listAll();
 
 	$page = new PageAdmin();
 
 	$page->setTpl("users", array(
-		"users"=>$users,
+		"users"=>$pagination['data'],
 		"search"=>$search,
 		"pages"=>$pages
 	));
